@@ -1,0 +1,25 @@
+# Android Expo (APK Builder) Requirements
+
+# Note: tkinter usually comes pre-installed with Python
+# If tkinter is missing, you may need to install it via your system package manager:
+#
+# Windows: Usually included with Python installer
+# Ubuntu/Debian: sudo apt-get install python3-tk
+# Fedora: sudo dnf install python3-tkinter
+# macOS: Usually included with Python
+
+# No additional pip packages required for this application
+# All dependencies are part of Python's standard library:
+# - tkinter (GUI framework)
+# - asyncio (async operations)
+# - subprocess (running external commands)
+# - threading (background tasks)
+# - pathlib (file path handling)
+# - datetime (timestamps)
+# - json (JSON parsing)
+
+# External system requirements (not pip installable):
+# - Node.js (https://nodejs.org/)
+# - npm (comes with Node.js)
+# - npx (comes with npm)
+# - Expo CLI (installed via: npm install -g expo-cli)
