@@ -718,6 +718,8 @@ class ExpoMateBuilder:
             process.wait()
 
             if process.returncode == 0:
+                # Create local.properties after successful prebuild
+                self.root.after(0, self._create_local_properties)
                 self.root.after(0, self._prebuild_success)
             else:
                 self.root.after(0, self._prebuild_failed)
@@ -726,6 +728,35 @@ class ExpoMateBuilder:
             error_msg = f"[ERROR] Prebuild failed: {str(e)}\n"
             self.root.after(0, self.log_message, error_msg)
             self.root.after(0, self._prebuild_failed)
+
+    def _create_local_properties(self):
+        """Create local.properties file with Android SDK path"""
+        folder = self.expo_folder.get()
+        android_folder = Path(folder) / "android"
+
+        if not android_folder.exists():
+            self.log_message("[WARNING] Android folder not found, skipping local.properties creation.\n")
+            return
+
+        try:
+            # Get the current username
+            username = os.getenv('USERNAME') or os.getenv('USER') or 'admin'
+
+            # Construct the SDK path based on OS
+            if os.name == 'nt':  # Windows
+                sdk_path = f"C:\\\\Users\\\\{username}\\\\AppData\\\\Local\\\\Android\\\\Sdk"
+            else:  # Linux/Mac
+                sdk_path = f"/Users/{username}/Library/Android/sdk"
+
+            # Create local.properties file
+            local_properties_path = android_folder / "local.properties"
+            with open(local_properties_path, 'w', encoding='utf-8') as f:
+                f.write(f"sdk.dir={sdk_path}\n")
+
+            self.log_message(f"[SUCCESS] Created local.properties with SDK path: {sdk_path}\n")
+
+        except Exception as e:
+            self.log_message(f"[WARNING] Failed to create local.properties: {str(e)}\n")
 
     def _prebuild_success(self):
         """Handle successful prebuild"""
