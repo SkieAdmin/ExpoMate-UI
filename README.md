@@ -172,16 +172,10 @@ If you encounter Gradle-related errors:
 
 ## 📄 About
 
-### Developer
-
-**ExpoMate** is developed by:
-
-**Kerneil Rommel S. Gocotano**
-*Panda-Pelican Development LLC*
 
 ### Credits
 
-Created by: **SkieHacker**
+Created by: **SkieHacker** ( Developed this Random App )
 
 ### Support
 
