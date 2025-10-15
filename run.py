@@ -404,7 +404,7 @@ class ExpoMateBuilder:
 
         version = tk.Label(
             header,
-            text="Version 1.0.0",
+            text="Version 1.1.0",
             font=("Segoe UI", 10),
             bg=self.dark_gray,
             fg="#888888"
@@ -893,22 +893,41 @@ if %CLEAN_EXIT_CODE% EQU 0 (
                 self.root.after(0, self._clean_complete)
 
             else:
-                # On Linux/Mac
-                terminal_commands = [
-                    ['gnome-terminal', '--', 'bash', '-c', f'cd "{android_folder}" && "{gradlew}" clean && echo "CLEAN SUCCESSFUL! Closing in 2 seconds..." && sleep 2'],
-                    ['xterm', '-e', f'cd "{android_folder}" && "{gradlew}" clean && echo "CLEAN SUCCESSFUL! Closing in 2 seconds..." && sleep 2'],
-                    ['konsole', '-e', f'cd "{android_folder}" && "{gradlew}" clean && echo "CLEAN SUCCESSFUL! Closing in 2 seconds..." && sleep 2'],
-                ]
-
+                # On macOS/Linux
                 terminal_opened = False
-                for cmd in terminal_commands:
+
+                # Try macOS Terminal first (most common on Mac)
+                if platform.system() == 'Darwin':  # macOS
                     try:
-                        subprocess.Popen(cmd)
+                        # Use AppleScript to open Terminal on macOS
+                        applescript = f'''
+                        tell application "Terminal"
+                            do script "cd '{android_folder}' && '{gradlew}' clean && echo 'CLEAN SUCCESSFUL! Closing in 2 seconds...' && sleep 2 && exit"
+                            activate
+                        end tell
+                        '''
+                        subprocess.Popen(['osascript', '-e', applescript])
                         terminal_opened = True
-                        self.root.after(0, self.log_message, "Clean running in terminal window...\n")
-                        break
-                    except FileNotFoundError:
-                        continue
+                        self.root.after(0, self.log_message, "Clean running in Terminal window (macOS)...\n")
+                    except Exception as e:
+                        self.root.after(0, self.log_message, f"[WARNING] Failed to open Terminal: {str(e)}\n")
+
+                # Try Linux terminals
+                if not terminal_opened:
+                    terminal_commands = [
+                        ['gnome-terminal', '--', 'bash', '-c', f'cd "{android_folder}" && "{gradlew}" clean && echo "CLEAN SUCCESSFUL! Closing in 2 seconds..." && sleep 2'],
+                        ['xterm', '-e', f'cd "{android_folder}" && "{gradlew}" clean && echo "CLEAN SUCCESSFUL! Closing in 2 seconds..." && sleep 2'],
+                        ['konsole', '-e', f'cd "{android_folder}" && "{gradlew}" clean && echo "CLEAN SUCCESSFUL! Closing in 2 seconds..." && sleep 2'],
+                    ]
+
+                    for cmd in terminal_commands:
+                        try:
+                            subprocess.Popen(cmd)
+                            terminal_opened = True
+                            self.root.after(0, self.log_message, "Clean running in terminal window...\n")
+                            break
+                        except FileNotFoundError:
+                            continue
 
                 import time
                 time.sleep(5)
@@ -1086,22 +1105,41 @@ if %BUILD_EXIT_CODE% EQU 0 (
                     self.root.after(0, self._compile_failed)
 
             else:
-                # On Linux/Mac, open a terminal window
-                terminal_commands = [
-                    ['gnome-terminal', '--', 'bash', '-c', f'cd "{android_folder}" && "{gradlew}" {gradle_task} && echo "BUILD SUCCESSFUL! Closing in 3 seconds..." && sleep 3'],
-                    ['xterm', '-e', f'cd "{android_folder}" && "{gradlew}" {gradle_task} && echo "BUILD SUCCESSFUL! Closing in 3 seconds..." && sleep 3'],
-                    ['konsole', '-e', f'cd "{android_folder}" && "{gradlew}" {gradle_task} && echo "BUILD SUCCESSFUL! Closing in 3 seconds..." && sleep 3'],
-                ]
-
+                # On macOS/Linux, open a terminal window
                 terminal_opened = False
-                for cmd in terminal_commands:
+
+                # Try macOS Terminal first (most common on Mac)
+                if platform.system() == 'Darwin':  # macOS
                     try:
-                        subprocess.Popen(cmd)
+                        # Use AppleScript to open Terminal on macOS
+                        applescript = f'''
+                        tell application "Terminal"
+                            do script "cd '{android_folder}' && '{gradlew}' {gradle_task} && echo 'BUILD SUCCESSFUL! Closing in 3 seconds...' && sleep 3 && exit"
+                            activate
+                        end tell
+                        '''
+                        subprocess.Popen(['osascript', '-e', applescript])
                         terminal_opened = True
-                        self.root.after(0, self.log_message, "Build running in terminal window...\n")
-                        break
-                    except FileNotFoundError:
-                        continue
+                        self.root.after(0, self.log_message, "Build running in Terminal window (macOS)...\n")
+                    except Exception as e:
+                        self.root.after(0, self.log_message, f"[WARNING] Failed to open Terminal: {str(e)}\n")
+
+                # Try Linux terminals
+                if not terminal_opened:
+                    terminal_commands = [
+                        ['gnome-terminal', '--', 'bash', '-c', f'cd "{android_folder}" && "{gradlew}" {gradle_task} && echo "BUILD SUCCESSFUL! Closing in 3 seconds..." && sleep 3'],
+                        ['xterm', '-e', f'cd "{android_folder}" && "{gradlew}" {gradle_task} && echo "BUILD SUCCESSFUL! Closing in 3 seconds..." && sleep 3'],
+                        ['konsole', '-e', f'cd "{android_folder}" && "{gradlew}" {gradle_task} && echo "BUILD SUCCESSFUL! Closing in 3 seconds..." && sleep 3'],
+                    ]
+
+                    for cmd in terminal_commands:
+                        try:
+                            subprocess.Popen(cmd)
+                            terminal_opened = True
+                            self.root.after(0, self.log_message, "Build running in terminal window...\n")
+                            break
+                        except FileNotFoundError:
+                            continue
 
                 if not terminal_opened:
                     self.root.after(0, self.log_message, "[WARNING] Could not open terminal. Running in background...\n")
@@ -1193,7 +1231,9 @@ if %BUILD_EXIT_CODE% EQU 0 (
             try:
                 if os.name == 'nt':  # Windows
                     os.startfile(output_path)
-                elif os.name == 'posix':  # macOS and Linux
+                elif platform.system() == 'Darwin':  # macOS
+                    subprocess.Popen(['open', output_path])
+                else:  # Linux
                     subprocess.Popen(['xdg-open', output_path])
                 self.log_message("Opened output folder.\n")
             except Exception as e:

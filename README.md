@@ -2,8 +2,9 @@
 
 A professional, elegant Python GUI application for building Android APK files from Expo projects with ease.
 
-![Version](https://img.shields.io/badge/version-1.0.0-orange)
+![Version](https://img.shields.io/badge/version-1.1.0-orange)
 ![Python](https://img.shields.io/badge/python-3.6+-blue)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS-lightgrey)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 ## 📋 Description
@@ -14,6 +15,7 @@ A professional, elegant Python GUI application for building Android APK files fr
 
 - **🎨 Modern UI** - Elegant dark theme with orange accents
 - **🔧 Automated Prebuild** - Run `expo prebuild` with a single click
+- **📱 Auto SDK Configuration** - Automatically creates `local.properties` with Android SDK path
 - **🧹 Build Cleanup** - Clean build artifacts before compilation
 - **🚀 One-Click Compilation** - Build release or debug APKs effortlessly
 - **📝 Real-Time Logging** - Monitor build progress with live log output
@@ -22,10 +24,16 @@ A professional, elegant Python GUI application for building Android APK files fr
 - **📂 Auto-Open Output** - Automatically opens APK output folder on success
 - **⚙️ Build Configuration** - Choose between Release or Debug builds
 - **🪟 Visible Terminal** - View detailed build process in CMD window
+- **🌐 Cross-Platform** - Supports both Windows and macOS
 
 ## 🎯 Requirements
 
 Before using ExpoMate, ensure you have the following installed:
+
+### Supported Platforms
+
+- **Windows 10/11** - Full support
+- **macOS** - Full support (Intel & Apple Silicon)
 
 ### Required Software
 
@@ -33,7 +41,7 @@ Before using ExpoMate, ensure you have the following installed:
 |----------|---------|---------|
 | **Android Studio** | Latest | Android SDK and build tools |
 | **Java SDK** | 21+ | Java Development Kit for Android builds |
-| **Node.js** | Latest | JavaScript runtime for Expo CLI |
+| **Node.js** | Latest LTS | JavaScript runtime for Expo CLI |
 | **Python** | 3.6+ | To run ExpoMate application |
 
 ### Installation Links
@@ -42,6 +50,17 @@ Before using ExpoMate, ensure you have the following installed:
 - [Java SDK 21](https://www.oracle.com/java/technologies/downloads/) - Download Java Development Kit
 - [Node.js](https://nodejs.org/) - Download the latest LTS version
 - [Python](https://www.python.org/downloads/) - Download Python 3.6 or higher
+
+### Platform-Specific Notes
+
+#### Windows
+- Android SDK is typically installed at: `C:\Users\{username}\AppData\Local\Android\Sdk`
+- ExpoMate will automatically configure this path for you
+
+#### macOS
+- Android SDK is typically installed at: `/Users/{username}/Library/Android/sdk`
+- ExpoMate will automatically configure this path for you
+- On Apple Silicon Macs, ensure Rosetta 2 is installed for compatibility
 
 ## 🚀 Getting Started
 
@@ -80,7 +99,8 @@ Before using ExpoMate, ensure you have the following installed:
 
 1. Click **🔧 Run Prebuild** button
 2. Wait for the prebuild process to complete
-3. A success message will appear when finished
+3. ExpoMate will automatically create `local.properties` with your Android SDK path
+4. A success message will appear when finished
 
 ### Step 3: Choose Build Type (Optional)
 
@@ -123,7 +143,7 @@ This allows you to review past builds and troubleshoot any issues.
 ### Features in Detail
 
 #### 🔧 Run Prebuild
-Executes `npx expo prebuild` to generate native Android project files. This step is required before compilation.
+Executes `npx expo prebuild` to generate native Android project files. After successful prebuild, ExpoMate automatically creates a `local.properties` file in the `android` folder with the correct Android SDK path based on your system username. This step is required before compilation.
 
 #### 🧹 Clean
 Runs `gradlew clean` to remove build cache and artifacts. Opens a CMD window showing the clean process. Auto-closes on success (2 seconds).
@@ -184,6 +204,13 @@ If you find ExpoMate useful, consider supporting the development:
 - 🌟 [View on GitHub](https://github.com/SkieAdmin)
 
 ## 🔄 Version History
+
+### Version 1.1.0
+- **NEW:** Automatic `local.properties` generation with Android SDK path
+- **NEW:** Cross-platform support for Windows and macOS
+- **NEW:** Auto-detection of system username for SDK path configuration
+- Improved SDK path handling for different operating systems
+- Enhanced error handling and logging
 
 ### Version 1.0.0
 - Initial release
